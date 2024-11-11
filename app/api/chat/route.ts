@@ -51,7 +51,7 @@ export async function POST(req: Request) {
             .describe("the content or resource to add to the knowledge base"),
         }),
         execute: async ({ content }) => {
-          console.log("addResource called with content:", content);
+          // console.log("addResource called with content:", content);
           try {
             return await createResource({ content });
           } catch (error) {
