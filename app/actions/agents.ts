@@ -1,8 +1,14 @@
 "use server"
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI, openai } from '@ai-sdk/openai';
 import { generateText, tool } from 'ai';
 import * as mathjs from 'mathjs';
 import { z } from 'zod';
+
+
+const groq = createOpenAI({
+  baseURL: "https://api.groq.com/openai/v1",
+  apiKey: process.env.GROQ_API_KEY,
+});
 
 const problem =
   'A taxi driver earns $9461 per 1-hour of work. ' +
@@ -13,7 +19,7 @@ const problem =
 console.log(`PROBLEM: ${problem}`);
 
 const { text: answer } = await generateText({
-  model: openai('gpt-4-turbo'),
+  model: groq("llama3-groq-70b-8192-tool-use-preview"),
   system:
     'You are solving math problems. ' +
     'Reason step by step. ' +

@@ -45,7 +45,11 @@ export const generateEmbeddings = async (
   
 
 export const findRelevantContent = async (userQuery: string) => {
+  console.log(userQuery, "gcvct");
+  
   const userQueryEmbedded = await generateEmbedding(userQuery);
+  console.log(userQueryEmbedded, "vvj");
+  
   const similarity = sql<number>`1 - (${cosineDistance(
     embeddings.embedding,
     userQueryEmbedded,
@@ -59,6 +63,97 @@ export const findRelevantContent = async (userQuery: string) => {
   return similarGuides;
 };
 
+
+// import { embed, embedMany } from 'ai';
+// import { createOllama } from 'ollama-ai-provider';
+// import { db } from '../db';
+// import { cosineDistance, desc, gt, sql } from 'drizzle-orm';
+// import { embeddings } from '../db/schema/embeddings';
+
+// const ollama = createOllama({
+//     baseURL: 'http://localhost:11434/api',
+// });
+
+// const embeddingModel = ollama.embedding('nomic-embed-text');
+
+// const generateChunks = (input: string, maxLength: number = 1000): string[] => {
+//   const words = input.split(' ');
+//   const chunks = [];
+//   let currentChunk = '';
+
+//   for (const word of words) {
+//     if ((currentChunk + ' ' + word).length <= maxLength) {
+//       currentChunk += (currentChunk ? ' ' : '') + word;
+//     } else {
+//       chunks.push(currentChunk);
+//       currentChunk = word;
+//     }
+//   }
+//   if (currentChunk) {
+//     chunks.push(currentChunk);
+//   }
+//   return chunks;
+// };
+
+// export const generateEmbeddings = async (
+//     value: string,
+//   ): Promise<Array<{ embedding: number[]; content: string }>> => {
+//     const chunks = generateChunks(value);
+//     try {
+//       const { embeddings } = await embedMany({
+//         model: embeddingModel,
+//         values: chunks,
+//       });
+      
+//       // Check if all embeddings have the same dimension
+//       const dimensions = embeddings[0].length;
+//       if (!embeddings.every(e => e.length === dimensions)) {
+//         throw new Error('Inconsistent embedding dimensions');
+//       }
+
+//       return embeddings.map((e, i) => ({ content: chunks[i], embedding: e }));
+//     } catch (error) {
+//       console.error('Error generating embeddings:', error);
+//       throw error;
+//     }
+//   };
+  
+// export const generateEmbedding = async (value: string): Promise<number[]> => {
+//   const input = value.replaceAll('\n', ' ').trim();
+//   try {
+//     const { embedding } = await embed({
+//       model: embeddingModel,
+//       value: input,
+//     });
+//     return embedding;
+//   } catch (error) {
+//     console.error('Error generating embedding:', error);
+//     throw error;
+//   }
+// };
+
+// export const findRelevantContent = async (userQuery: string) => {
+//   try {
+//     const userQueryEmbedded = await generateEmbedding(userQuery);
+    
+//     const similarity = sql<number>`1 - ${cosineDistance(
+//       embeddings.embedding,
+//       userQueryEmbedded,
+//     )}`;
+    
+//     const similarGuides = await db
+//       .select({ name: embeddings.content, similarity })
+//       .from(embeddings)
+//       .where(gt(similarity, 0.5))
+//       .orderBy(t => desc(t.similarity))
+//       .limit(4);
+    
+//     return similarGuides;
+//   } catch (error) {
+//     console.error('Error finding relevant content:', error);
+//     throw error;
+//   }
+// };
 
 
 
