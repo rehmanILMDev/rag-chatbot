@@ -1,7 +1,7 @@
 'use server';
 
 import { generateText, tool } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI, openai } from '@ai-sdk/openai';
 import { z } from 'zod';
 import { mistral } from '@ai-sdk/mistral';
 import * as mathjs from 'mathjs';
@@ -18,7 +18,10 @@ function getWeather({ city, unit }: any) {
 
   return { value: 25, description: 'Sunny' };
 }
-
+const groq = createOpenAI({
+  baseURL: "https://api.groq.com/openai/v1",
+  apiKey: process.env.GROQ_API_KEY,
+});
 export async function continueConversation(history: Message[]) {
   'use server';
 
@@ -49,7 +52,7 @@ const problem =
   'he uses 12 liters of petrol with a price  of $134 for 1 liter. ' +
   'How much money does he earn in one day?';
   const { text: answer } = await generateText({
-    model:  mistral('mistral-large-latest'),
+    model: groq("llama3-groq-70b-8192-tool-use-preview"),
     system:
       'You are solving math problems. ' +
       'Reason step by step. ' +
