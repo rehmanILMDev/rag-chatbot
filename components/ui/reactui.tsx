@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { ClientMessage } from '@/app/actions/reactcompoui';
 import { useActions, useUIState } from 'ai/rsc';
 import { generateId } from 'ai';
+// import { ClientMessage } from '@/app/actions';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -13,6 +14,7 @@ export default function ReactCompoUi() {
     const [input, setInput] = useState<string>('');
     const [conversation, setConversation] = useUIState();
     const { continueConversation } = useActions();
+console.log(conversation, "dgbbdgbdf");
 
     return (
         <div>

@@ -1,84 +1,71 @@
 "use client";
 
 import ReactCompoUi from "@/components/ui/reactui";
-import AgentsTool from "@/components/ui/tools";
-import { useChat } from "ai/react";
 
 export default function Chat() {
-  const {
-    messages,
-    input,
-    handleInputChange,
-    handleSubmit,
-    isLoading,
-    error,
-    reload,
-    stop,
-  } = useChat({
-    maxToolRoundtrips: 4,
-  });
+ 
 
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-      <div className="space-y-4">
-        {messages.map((m) => (
-          <div key={m.id} className="whitespace-pre-wrap">
-            <div>
-              <div className="font-bold">
-                {m.role === "user" ? "Rehman: " : "AI: "}
-              </div>
-              <p>
-                {m.content.length > 0 ? (
-                  m.content
-                ) : (
-                  <span className="italic font-light">
-                    {"calling tool: " + m?.toolInvocations?.[0].toolName}
-                  </span>
-                )}
-              </p>
-            </div>
-          </div>
-        ))}
+    // <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
+    //   <div className="space-y-4">
+    //     {messages.map((m) => (
+    //       <div key={m.id} className="whitespace-pre-wrap">
+    //         <div>
+    //           <div className="font-bold">
+    //             {m.role === "user" ? "Rehman: " : "AI: "}
+    //           </div>
+    //           <p>
+    //             {m.content.length > 0 ? (
+    //               m.content
+    //             ) : (
+    //               <span className="italic font-light">
+    //                 {"calling tool: " + m?.toolInvocations?.[0].toolName}
+    //               </span>
+    //             )}
+    //           </p>
+    //         </div>
+    //       </div>
+    //     ))}
 
-        {isLoading && (
-          <div>
-            <div className="flex space-x-2 justify-center items-center dark:invert">
-              <span className="sr-only">Loading...</span>
-              <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-              <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-              <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
-            </div>
-            <button
-              type="button"
-              className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-              onClick={() => stop()}
-            >
-              stop
-            </button>
-          </div>
-        )}
+    //     {isLoading && (
+    //       <div>
+    //         <div className="flex space-x-2 justify-center items-center dark:invert">
+    //           <span className="sr-only">Loading...</span>
+    //           <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+    //           <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+    //           <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
+    //         </div>
+    //         <button
+    //           type="button"
+    //           className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+    //           onClick={() => stop()}
+    //         >
+    //           stop
+    //         </button>
+    //       </div>
+    //     )}
 
-        {error && (
-          <>
-            <div>An error occurred.</div>
-            <button type="button" onClick={() => reload()}>
-              Retry
-            </button>
-          </>
-        )}
-      </div>
+    //     {error && (
+    //       <>
+    //         <div>An error occurred.</div>
+    //         <button type="button" onClick={() => reload()}>
+    //           Retry
+    //         </button>
+    //       </>
+    //     )}
+    //   </div>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          className="fixed bottom-0 w-full max-w-md p-2 my-8 border border-gray-300 rounded shadow-xl"
-          value={input}
-          placeholder="Say something..."
-          onChange={handleInputChange}
-          disabled={isLoading}
-        />
-      </form>
-    </div>
-
+    //   <form onSubmit={handleSubmit}>
+    //     <input
+    //       className="fixed bottom-0 w-full max-w-md p-2 my-8 border border-gray-300 rounded shadow-xl"
+    //       value={input}
+    //       placeholder="Say something..."
+    //       onChange={handleInputChange}
+    //       disabled={isLoading}
+    //     />
+    //   </form>
+    // </div>
+<ReactCompoUi/>
   );
 }
 
@@ -205,6 +192,12 @@ export default function Chat() {
 
 
 
+
+
+
+
+
+
 // 'use client'
 
 // import { useState } from 'react'
@@ -226,6 +219,7 @@ export default function Chat() {
 //   const [result, setResult] = useState<{ text?: string; numberOfPages?: number; error?: string } | null>(null)
 
 //   async function handleSubmit(formData: FormData) {
+//     console.log("Formdata", formData)
 //     const response = await processPDF(formData)
 //     setResult(response)
 //   }
@@ -259,5 +253,165 @@ export default function Chat() {
 //           </div>
 //         )}
 //      </> 
+//   )
+// }
+
+
+
+// 'use client';
+
+// import { useCompletion } from 'ai/react';
+
+// export default function Chat() {
+//   const { completion, input, handleInputChange, handleSubmit } =
+//     useCompletion();
+
+//   return (
+//     <div>
+//       {completion}
+//       <form onSubmit={handleSubmit}>
+//         <input value={input} onChange={handleInputChange} />
+//       </form>
+//     </div>
+//   );
+// }
+
+
+
+// // tool invocation 
+// 'use client';
+
+// import { ToolInvocation } from 'ai';
+// import { Message, useChat } from 'ai/react';
+
+// export default function Chat() {
+//   const { messages, input, handleInputChange, handleSubmit, addToolResult } =
+//     useChat({
+//       maxToolRoundtrips: 5,
+//       // run client-side tools that are automatically executed:
+//       async onToolCall({ toolCall }) {
+//         if (toolCall.toolName === 'getLocation') {
+//           const cities = [
+//             'New York',
+//             'Los Angeles',
+//             'Chicago',
+//             'San Francisco',
+//           ];
+//           return cities[Math.floor(Math.random() * cities.length)];
+//         }
+//       },
+//     });
+
+//   return (
+//     <>
+//       {messages?.map((m: Message) => (
+//         <div key={m.id}>
+//           <strong>{m.role}:</strong>
+//           {m.content}
+//           {m.toolInvocations?.map((toolInvocation: ToolInvocation) => {
+//             const toolCallId = toolInvocation.toolCallId;
+//             const addResult = (result: string) =>
+//               addToolResult({ toolCallId, result });
+
+//             // render confirmation tool (client-side tool with user interaction)
+//             if (toolInvocation.toolName === 'askForConfirmation') {
+//               return (
+//                 <div key={toolCallId}>
+//                   {toolInvocation.args.message}
+//                   <div>
+//                     {'result' in toolInvocation ? (
+//                       <b>{toolInvocation.result}</b>
+//                     ) : (
+//                       <>
+//                         <button onClick={() => addResult('Yes')}>Yes</button>
+//                         <button onClick={() => addResult('No')}>No</button>
+//                       </>
+//                     )}
+//                   </div>
+//                 </div>
+//               );
+//             }
+
+//             // other tools:
+//             return 'result' in toolInvocation ? (
+//               <div key={toolCallId}>
+//                 Tool call {`${toolInvocation.toolName}: `}
+//                 {toolInvocation.result}
+//               </div>
+//             ) : (
+//               <div key={toolCallId}>Calling {toolInvocation.toolName}...</div>
+//             );
+//           })}
+//           <br />
+//         </div>
+//       ))}
+
+//       <form onSubmit={handleSubmit}>
+//         <input value={input} onChange={handleInputChange} />
+//       </form>
+//     </>
+//   );
+// }
+
+
+
+// "use client"
+
+// import { useState } from 'react'
+// import { Button } from '@/components/ui/button'
+// import { Input } from '@/components/ui/input'
+// import { generateTypeScript } from './actions/generateTypescript'
+
+// export default function Home() {
+//   const [prompt, setPrompt] = useState('')
+//   const [generatedCode, setGeneratedCode] = useState('')
+//   const [isLoading, setIsLoading] = useState(false)
+
+//   // Function to filter valid TypeScript code
+//   const extractTypeScriptCode = (result) => {
+//     const codeBlockMatch = result.match(/```typescript([\s\S]*?)```/); // Look for TypeScript code block
+//     return codeBlockMatch ? codeBlockMatch[1].trim() : result.trim(); // Extract code or return raw result
+//   }
+
+//   const handleGenerate = async () => {
+//     setIsLoading(true)
+//     try {
+//       const result = await generateTypeScript(prompt)
+//       const filteredCode = extractTypeScriptCode(result) // Process generated code
+//       setGeneratedCode(filteredCode)
+//     } catch (error) {
+//       console.error('Error generating TypeScript code:', error)
+//       setGeneratedCode('Error generating code. Please try again.')
+//     } finally {
+//       setIsLoading(false)
+//     }
+//   }
+
+//   return (
+//     <div className="container mx-auto p-4">
+//       <h1 className="text-2xl font-bold mb-4">TypeScript Code Generator</h1>
+//       <div>
+//         <div>
+//           <Input
+//             type="text"
+//             value={prompt}
+//             onChange={(e) => setPrompt(e.target.value)}
+//             placeholder="E.g., Create an interface for a User with name, age, and email properties"
+//             className="mb-4"
+//           />
+//           <Button onClick={handleGenerate} disabled={isLoading}>
+//             {isLoading ? 'Generating...' : 'Generate TypeScript'}
+//           </Button>
+//         </div>
+//         {generatedCode && (
+//           <div className="flex flex-col items-start mt-4">
+//             <h3 className="text-lg font-semibold mb-2">Generated TypeScript Code:</h3>
+//             <pre className="bg-gray-100 p-4 rounded-md overflow-x-auto w-full">
+//               <code>{generatedCode}</code>
+//             </pre>
+//           </div>
+//         )}
+//       </div>
+//     </div>
 //   )
 // }

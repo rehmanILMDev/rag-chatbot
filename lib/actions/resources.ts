@@ -8,6 +8,7 @@ import {
 import { db } from "../db";
 import { generateEmbeddings } from "../ai/embedding";
 import { embeddings as embeddingsTable } from "../db/schema/embeddings";
+import { chunk } from "../db/schema/chunks";
 
 export const createResource = async (input: NewResourceParams) => {
   try {
@@ -16,23 +17,34 @@ export const createResource = async (input: NewResourceParams) => {
     console.log("Received content:", content);
 
     // Insert content into resources table
-    const [resource] = await db.insert(resources).values({ content }).returning();
-    console.log("Resource successfully created:", resource);
+    // const [resource] = await db.insert(resources).values({ content }).returning();
+    // console.log("Resource successfully created:", resource);
 
     // Generate embeddings for the inserted content
     try {
+      if (!content || content.trim().length === 0) {
+        throw new Error("Content is empty or invalid.");
+      }
+    
       const embeddings = await generateEmbeddings(content);
-      await db.insert(embeddingsTable).values(
-        embeddings.map((embedding) => ({
-          resourceId: resource.id,
-          ...embedding,
-        }))
-      );
-      console.log("Embeddings successfully added for resource:", resource.id);
+      console.log("Generated embeddings:", embeddings);
+    
+      if (embeddings.length === 0) {
+        throw new Error("No embeddings generated. Cannot insert into the database.");
+      }
+    
+      // await db.insert(embeddingsTable).values(
+      //   embeddings.map((embedding) => ({
+      //     resourceId: resource.id,
+      //     ...embedding,
+      //   }))
+      // );
+      // console.log("Embeddings successfully added for resource:", resource.id);
     } catch (embeddingError) {
       console.error("Error inserting embeddings:", embeddingError);
       throw new Error("Failed to create embeddings for the resource.");
     }
+    
 
     // Return success message if everything went well
     return "Resource successfully created and embedded.";
@@ -43,3 +55,22 @@ export const createResource = async (input: NewResourceParams) => {
     return error instanceof Error ? error.message : "An unknown error occurred.";
   }
 };
+
+
+
+export async function insertChunks({ chunks }: { chunks: any[] }) {
+  console.log(chunks, "hdhdthd chunks");
+  
+  return await db.insert(chunk).values(chunks);
+}
+
+
+
+export async function getChunks() {
+  try {
+    return await db.select().from(chunk);
+  } catch (error) {
+    console.error("Error fetching chunks:", error);
+    throw new Error("Failed to fetch knowledge base chunks.");
+  }
+}

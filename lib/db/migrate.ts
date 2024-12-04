@@ -20,7 +20,7 @@ const db = drizzle(connection);
 
   const start = Date.now();
 
-  await migrate(db, { migrationsFolder: 'lib/db/migrations' });
+  await migrate(db, { migrationsFolder: "../lib/db/migrations" });
 
   const end = Date.now();
 
