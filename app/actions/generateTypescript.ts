@@ -1,12 +1,17 @@
-'use server'
+"use server";
 
-import { generateObject, generateText } from 'ai'
-import { createOpenAI, openai } from '@ai-sdk/openai'
-import { z } from 'zod';
+import {
+  convertToCoreMessages,
+  generateObject,
+  generateText,
+  streamText,
+} from "ai";
+import { createOpenAI, openai } from "@ai-sdk/openai";
+import { z } from "zod";
 
 export async function generateTypeScript(prompt: string) {
-    const componentTemplate = `
-
+  const componentTemplate = `
+"use client"
 import { // Define the Icons that will be use } from 'lucide-react'
 import {
   Accordion,
@@ -29,8 +34,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
     };
   
     `;
-    
-    const GENERATE_COMPONENT_PROMPT = `
+
+  const GENERATE_COMPONENT_PROMPT = `
     You are an expert Frontend Developer skilled in React with TypeScript.
     
     Your task is to generate a React Functional Component based on the provided description. The component should:
@@ -59,8 +64,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
  The returned code should be wrapped in markdown using \`\`\`tsx <Your Code Here> \`\`\`.
 
     `;
-    
-    const systemMessage = `You are an intelligent User Experience Designer specializing in creating visually appealing and effective UI component suggestions for text-based content. Your role is to:
+
+  const systemMessage = `You are an intelligent User Experience Designer specializing in creating visually appealing and effective UI component suggestions for text-based content. Your role is to:
 
 1. **Analyze the Content**: 
    - Understand the provided content, its structure, and its intended purpose.
@@ -118,18 +123,45 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
    - If you cannot determine the appropriate UI component, provide a fallback suggestion, such as a simple list or paragraph format.
 
 Your purpose is to ensure that each response delivers thoughtful and creative UI component suggestions that meet user requirements while adhering to modern design standards.
-`
-    const assistantResponse = `"1. **Essential Cookies**
+`;
+  const assistantResponse = `1. **Essential Cookies**
    - Necessary for the website to function properly.
    - Enable secure logins and remember shopping cart items.
 
 2. **Analytics Cookies**
    - Used to track and analyze visitor behavior.
-   - Help improve the overall user experience by understanding which pages are most popular and how users interact with our website."`
+   - Help improve the overall user experience by understanding which pages are most popular and how users interact with our website."`;
 
+  const sampleData = `At ILM UX Pvt Ltd, we offer a range of services to help you achieve your business goals. Here are some of our key offerings:
 
+UX Consulting: Our UX consulting services craft user-centered designs that engage, convert, and retain customers. We collaborate closely with you to align product design with your business goals, ensuring seamless, intuitive experiences that drive results. Services include:
 
-   const newsysMsg = `
+User Research and Analysis
+Product Ideation and Concept Design
+Wireframes and Prototyping
+Design Thinking Workshops
+UX Design Audits
+UI / Front-end Engineering: We design and develop scalable, maintainable interfaces with the latest web technologies. Our front-end solutions ensure fast, responsive user experiences that are built to grow alongside your business. Services include:
+
+UI Architecture and Design
+UI Component Design and Development
+Frontend Development with Modern Web Frameworks (React, Angular, etc.)
+End-to-End Custom Software Development: From concept to deployment, we build custom software that addresses your specific challenges. Our end-to-end development process ensures your software is unique, efficient, and ready to scale.
+
+Product Development (Mobile/Web): We turn your vision into reality by developing mobile and web products that are scalable, secure, and designed to boost revenue. Our team aligns product strategy with business growth for impactful solutions. Services include:
+
+Product Ideation and Concept Design
+Mobile App Development (iOS, Android)
+Web Development with Modern Web Frameworks
+DevOps and Continuous Integration
+Platform Engineering Services: Our platform engineering services focus on cloud-native, secure, and scalable solutions. We design platforms that adapt to your growing needs while ensuring efficiency and reliability. Services include:
+
+UI Architecture and Design
+UI Component Design and Development
+Frontend Development with Modern Web Frameworks (React, Angular, etc.)
+Responsive and Adaptive Design`;
+
+  const newsysMsg = `
    You are an expert Frontend Developer skilled in React with TypeScript, specializing in building dynamic and responsive UI components for structured content.
 
 Your task is to generate a reusable and production-ready React Functional Component and also it should be responsive that dynamically renders UI elements based on the given JSON structure. The component should:
@@ -168,10 +200,9 @@ Your task is to generate a reusable and production-ready React Functional Compon
    - Provide fallback UI for missing or incomplete data in the JSON.
    - Use placeholder icons or text where applicable.
 
-Your goal is to dynamically interpret the given JSON structure and produce a React Functional Component that visually represents the data using modern UI principles.`
+Your goal is to dynamically interpret the given JSON structure and produce a React Functional Component that visually represents the data using modern UI principles.`;
 
-
-const pmpt = `{
+  const pmpt = `{
   "content": "1. **Essential Cookies**\n- Necessary for the website to function properly.\n- Enable secure logins and remember shopping cart items.\n\n2. **Analytics Cookies**\n- Used to track and analyze visitor behavior.\n- Help improve the overall user experience by understanding which pages are most popular and how users interact with our website.",
   "suggestions": [
     {
@@ -225,9 +256,9 @@ const pmpt = `{
       }
     }
   ]
-}`
+}`;
 
-const propTemplate =  `const exampleProps: ComponentProps = {
+  const propTemplate = `const exampleProps: ComponentProps = {
   suggestions: [
     {
       component: "Accordion",
@@ -280,16 +311,26 @@ const propTemplate =  `const exampleProps: ComponentProps = {
       },
     },
   ],
-}`
-
-const schema = z.object({
-  content: z.string(),
-  suggestions: z.array(
-    z.object({
-      component: z.enum(["card", "accordion", "tabs", "collapsiblePanel", "timeline", "list"]),
-      description: z.string(),
-      structure: z.union([
-        z.array(
+}`;
+  //  "tabs", "collapsiblePanel", "timeline", "list"
+  const schema = z.object({
+    content: z.string(),
+    suggestions: z.array(
+      z.object({
+        component: z.enum(["card", "accordion"]),
+        description: z.string(),
+        structure: z.union([
+          z.array(
+            z.object({
+              title: z.string(),
+              subPoints: z.array(
+                z.object({
+                  text: z.string(),
+                  emphasis: z.boolean().optional(),
+                })
+              ),
+            })
+          ),
           z.object({
             title: z.string(),
             subPoints: z.array(
@@ -298,84 +339,270 @@ const schema = z.object({
                 emphasis: z.boolean().optional(),
               })
             ),
-          })
-        ),
-        z.object({
-          title: z.string(),
-          subPoints: z.array(
-            z.object({
-              text: z.string(),
-              emphasis: z.boolean().optional(),
-            })
-          ),
+          }),
+        ]),
+        styles: z.object({
+          font: z.string(),
+          colorScheme: z.string(),
+          spacing: z.string(),
         }),
-      ]),
-      styles: z.object({
-        font: z.string(),
-        colorScheme: z.string(),
-        spacing: z.string(),
-      }),
-    })
-  ),
-});
-
-    const groq = createOpenAI({
-        baseURL: "https://api.groq.com/openai/v1",
-        apiKey: process.env.GROQ_API_KEY,
-      });
-    
-      const object  = await generateObject({
-        model: groq("llama-3.1-70b-versatile"),
-        system: `You are an intelligent User Experience Designer specializing in creating visually appealing and effective UI component suggestions for text-based content. Analyze the given content and suggest appropriate UI components.`,
-        prompt: `Analyze the following content and suggest appropriate UI components: ${assistantResponse}`,
-        schema: schema
       })
-   console.log("Generated UI Suggestions:")
-  console.log(object.object)
+    ),
+  });
+  const ApproachItem = {
+    title: "string",
+    content: "string",
+  };
 
-  const result = await generateText({
+  const ApproachCategory = {
+    category: "string",
+    items: [ApproachItem],
+  };
+
+  const SynergyApproachTabsProps = {
+    data: [ApproachCategory],
+  };
+
+  const ProductFeature = {
+    title: "string",
+    description: "string",
+  };
+
+  const Product = {
+    name: "string",
+    description: "string",
+    features: [ProductFeature],
+    icon: "string",
+  };
+
+  const ProductShowcaseProps = {
+    title: "string",
+    description: "string",
+    products: [Product],
+  };
+
+  const SubService = {
+    name: "string",
+    description: "string",
+  };
+
+  const Service = {
+    name: "string",
+    description: "string",
+    icon: "unknown", // Any value is allowed
+    subServices: [SubService], // Optional
+  };
+
+  const ServiceShowcaseProps = {
+    services: [Service],
+  };
+
+  const AccordionData = {
+    title: "string",
+    content: "string",
+  };
+
+  const CustomAccordionProps = {
+    data: [AccordionData],
+  };
+
+  const Card = {
+    name: "string",
+    message: "string",
+    avatarUrl: "string", // Valid URL
+  };
+
+  const Industry = {
+    name: "string",
+    description: "string",
+    icon: "unknown", // Any value is allowed
+  };
+
+  const AnnimateCard = {
+    industries: [Industry],
+  };
+
+  const Client = {
+    name: "string",
+    description: "string",
+    logo: "string", // Assuming a URL or file path
+    industry: "string",
+  };
+
+  const CardCarousel = {
+    title: "string",
+    description: "string",
+    clients: [Client],
+  };
+
+  const Field = {
+    type: "text | email | tel | textarea",
+    placeholder: "string",
+    name: "string",
+  };
+
+  const Action = {
+    type: "button | form",
+    label: "string", // Optional
+    url: "string", // Valid URL, Optional
+    fields: [Field], // Optional
+  };
+
+  const ContactMethod = {
+    icon: "Mail | Phone | MessageSquare",
+    title: "string",
+    description: "string",
+    action: Action,
+  };
+
+  const ContactInfoCard = {
+    title: "string",
+    description: "string",
+    methods: [ContactMethod],
+  };
+
+   const componentNameWithschema = [
+    {
+      componentName: "TabComponent",
+      schema: SynergyApproachTabsProps,
+    },
+    {
+      componentName: "TabCardComponent",
+      schema: ProductShowcaseProps,
+    },
+    {
+      componentName: "TabCardAccordianComponent",
+      schema: ServiceShowcaseProps,
+    },
+    {
+      componentName: "AcordianComponent",
+      schema: CustomAccordionProps,
+    },
+    {
+      componentName: "CardComponent",
+      schema: Card,
+    },
+    {
+      componentName: "AnimationCardComponent",
+      schema: AnnimateCard,
+    },
+    {
+      componentName: "CardCarouselComponent",
+      schema: CardCarousel,
+    },
+    {
+      componentName: "ContactCardComponent",
+      schema: ContactInfoCard,
+    },
+  ];
+
+  const SelectedComponentSchema = z.object({
+    componentName: z.string(),
+    schema: z.any(),
+  });
+
+  const groq = createOpenAI({
+    baseURL: "https://api.groq.com/openai/v1",
+    apiKey: process.env.GROQ_API_KEY,
+  });
+
+  const object = await generateObject({
     model: groq("llama-3.1-70b-versatile"),
-    system: `You are an expert React developer skilled in TypeScript. Your task is to generate a highly interactive, visually appealing, and reusable React Functional Component using Tailwind CSS based on a given JSON structure. The component must:
+    system: `
+    You are an intelligent User Experience Designer tasked with analyzing content and mapping it to the most suitable UI component. 
+    Your job is to:
+    1. Select the most appropriate \`componentName\` from the following predefined list:
+    ${JSON.stringify(
+      componentNameWithschema.map((c) => c.componentName),
+      null,
+      2
+    )}
+    2. Use the schema associated with the selected \`componentName\` from the list below to create the schema for the content:
+    ${JSON.stringify(componentNameWithschema, null, 2)}
+    3. Your output must strictly adhere to the following format:
+    {
+      componentName: "SelectedComponentName",
+      schema: GeneratedSchemaObject
+    }
+    
+    Rules:
+    - Only use the components and schemas provided in the list.
+    - Do not generate or suggest components outside of the given list.
+    - Analyze the input content carefully to determine the best match.
+    
+    Return only a single object with \`componentName\` and \`schema\`.
+    `,
+    prompt: `
+    Analyze the following content and determine the best component from the provided list. Then, use the corresponding schema to generate the schema for the content:
+    
+    Content:
+    ${assistantResponse}
+    `,
+    schema: SelectedComponentSchema,
+  });
+  console.log("Generated UI Suggested:");
+  console.log(object.object);
 
-1. Dynamically render **advanced interactive UI elements** (e.g., Accordions, Tabs, Cards, Modals, or Drag-and-Drop areas) as described in the JSON structure.
-2. Incorporate **interactivity** such as animations (e.g., collapsible sections, hover effects) and stateful behaviors (e.g., toggles, expanded views).
-3. Ensure the component is **responsive**, **accessible**, and uses **semantic HTML** for better usability and compliance.
-4. Use **Tailwind CSS** to achieve a modern and polished design with responsive layouts and proper spacing, fonts, and colors.
-5. Be written in **clean, production-ready TypeScript** with detailed typings for props and state.
-6. Include **error handling and fallback mechanisms** for incomplete or missing data, such as placeholder content or default icons.
-7. Leverage React best practices, such as separation of concerns, efficient state management, and component reusability.
-8. Use **example JSON data** to showcase the functionality in a realistic scenario.
+  return object.toJsonResponse()
+  // const result = await streamText({
+  //   model: groq("llama-3.1-70b-versatile"),
+  //   system: `\n
+  //     - you help to calling the tool!
+  //     - keep your responses limited to a tool list given.
+  //     - DO NOT output lists.
+  //     - after every tool call, pretend you're showing the result to the user.
+  //     - today's date is ${new Date().toLocaleDateString()}.
+  //   `,
+  //   prompt: `${object.object}`,
+  //   tools: {
+  //     getTheComponent: {
+  //       description: "Get the component and schema",
+  //       parameters: SelectedComponentSchema,
+  //       execute: async ({ componentName, schema }) => {
+  //         return { componentName, schema };
+  //       },
+  //     },
+  //   },
+  // });
 
-### Example Props Structure:
-${propTemplate}
-
-
-### Output Format:
-
-Return only the DynamicComponent, excluding the app's code. Do not include instructions on how to use the DynamicComponent with a prop. The condition is mandatory: only the DynamicComponent is required as given below in componentTemplate. Wrap it in Markdown using the specified format:
-${componentTemplate}
-
-### Key Features:
-- Interactive and engaging design, supporting animations and dynamic elements.
-- Comprehensive use of the JSON structure, handling nested and conditional data structures effectively.
-- Example use cases: Dynamic forms, rich content accordions, tabbed navigation, and styled card grids.
-
-Focus solely on generating the dynamic and interactive component logic with an excellent user experience.
-
-`,
-    prompt: `${object.object}`,
-    temperature: 0.4,
-    maxTokens: 1000,
-  })
-
-  return result.text;
-
-
+  // return result.toDataStreamResponse();
 
 
 
 }
 
+//   const result = await generateText({
+//     model: groq("llama-3.1-70b-versatile"),
+//     system: `You are an expert React developer skilled in TypeScript. Your task is to generate a highly interactive, visually appealing, and reusable React Functional Component using Tailwind CSS based on a given JSON structure. The component must:
 
+// 1. Dynamically render **advanced interactive UI elements** (e.g., Accordions, Tabs, Cards, Modals, or Drag-and-Drop areas) as described in the JSON structure.
+// 2. Incorporate **interactivity** such as animations (e.g., collapsible sections, hover effects) and stateful behaviors (e.g., toggles, expanded views).
+// 3. Ensure the component is **responsive**, **accessible**, and uses **semantic HTML** for better usability and compliance.
+// 4. Use **Tailwind CSS** to achieve a modern and polished design with responsive layouts and proper spacing, fonts, and colors.
+// 5. Be written in **clean, production-ready TypeScript** with detailed typings for props and state.
+// 6. Include **error handling and fallback mechanisms** for incomplete or missing data, such as placeholder content or default icons.
+// 7. Leverage React best practices, such as separation of concerns, efficient state management, and component reusability.
+// 8. Use **example JSON data** to showcase the functionality in a realistic scenario.
 
+// ### Example Props Structure:
+// ${propTemplate}
 
+// ### Output Format:
+
+// Return only the DynamicComponent, excluding the app's code. Do not include instructions on how to use the DynamicComponent with a prop. The condition is mandatory: only the DynamicComponent is required as given below in componentTemplate. Wrap it in Markdown using the specified format:
+// ${componentTemplate}
+
+// ### Key Features:
+// - Interactive and engaging design, supporting animations and dynamic elements.
+// - Comprehensive use of the JSON structure, handling nested and conditional data structures effectively.
+// - Example use cases: Dynamic forms, rich content accordions, tabbed navigation, and styled card grids.
+
+// Focus solely on generating the dynamic and interactive component logic with an excellent user experience.
+
+// `,
+//     prompt: `${object.object}`,
+//     temperature: 0.4,
+//     maxTokens: 1000,
+//   });
+
+//   return result.text;

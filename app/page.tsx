@@ -1,83 +1,78 @@
-"use client";
+// "use client";
 
-import ReactCompoUi from "@/components/ui/reactui";
+// import ReactCompoUi from "@/components/ui/reactui";
 
-export default function Chat() {
- 
+// export default function Chat() {
 
-  return (
-    // <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
-    //   <div className="space-y-4">
-    //     {messages.map((m) => (
-    //       <div key={m.id} className="whitespace-pre-wrap">
-    //         <div>
-    //           <div className="font-bold">
-    //             {m.role === "user" ? "Rehman: " : "AI: "}
-    //           </div>
-    //           <p>
-    //             {m.content.length > 0 ? (
-    //               m.content
-    //             ) : (
-    //               <span className="italic font-light">
-    //                 {"calling tool: " + m?.toolInvocations?.[0].toolName}
-    //               </span>
-    //             )}
-    //           </p>
-    //         </div>
-    //       </div>
-    //     ))}
+//   return (
+//     // <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
+//     //   <div className="space-y-4">
+//     //     {messages.map((m) => (
+//     //       <div key={m.id} className="whitespace-pre-wrap">
+//     //         <div>
+//     //           <div className="font-bold">
+//     //             {m.role === "user" ? "Rehman: " : "AI: "}
+//     //           </div>
+//     //           <p>
+//     //             {m.content.length > 0 ? (
+//     //               m.content
+//     //             ) : (
+//     //               <span className="italic font-light">
+//     //                 {"calling tool: " + m?.toolInvocations?.[0].toolName}
+//     //               </span>
+//     //             )}
+//     //           </p>
+//     //         </div>
+//     //       </div>
+//     //     ))}
 
-    //     {isLoading && (
-    //       <div>
-    //         <div className="flex space-x-2 justify-center items-center dark:invert">
-    //           <span className="sr-only">Loading...</span>
-    //           <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-    //           <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-    //           <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
-    //         </div>
-    //         <button
-    //           type="button"
-    //           className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-    //           onClick={() => stop()}
-    //         >
-    //           stop
-    //         </button>
-    //       </div>
-    //     )}
+//     //     {isLoading && (
+//     //       <div>
+//     //         <div className="flex space-x-2 justify-center items-center dark:invert">
+//     //           <span className="sr-only">Loading...</span>
+//     //           <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+//     //           <div className="h-8 w-8 bg-black rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+//     //           <div className="h-8 w-8 bg-black rounded-full animate-bounce"></div>
+//     //         </div>
+//     //         <button
+//     //           type="button"
+//     //           className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+//     //           onClick={() => stop()}
+//     //         >
+//     //           stop
+//     //         </button>
+//     //       </div>
+//     //     )}
 
-    //     {error && (
-    //       <>
-    //         <div>An error occurred.</div>
-    //         <button type="button" onClick={() => reload()}>
-    //           Retry
-    //         </button>
-    //       </>
-    //     )}
-    //   </div>
+//     //     {error && (
+//     //       <>
+//     //         <div>An error occurred.</div>
+//     //         <button type="button" onClick={() => reload()}>
+//     //           Retry
+//     //         </button>
+//     //       </>
+//     //     )}
+//     //   </div>
 
-    //   <form onSubmit={handleSubmit}>
-    //     <input
-    //       className="fixed bottom-0 w-full max-w-md p-2 my-8 border border-gray-300 rounded shadow-xl"
-    //       value={input}
-    //       placeholder="Say something..."
-    //       onChange={handleInputChange}
-    //       disabled={isLoading}
-    //     />
-    //   </form>
-    // </div>
-<ReactCompoUi/>
-  );
-}
-
-
-
+//     //   <form onSubmit={handleSubmit}>
+//     //     <input
+//     //       className="fixed bottom-0 w-full max-w-md p-2 my-8 border border-gray-300 rounded shadow-xl"
+//     //       value={input}
+//     //       placeholder="Say something..."
+//     //       onChange={handleInputChange}
+//     //       disabled={isLoading}
+//     //     />
+//     //   </form>
+//     // </div>
+// <ReactCompoUi/>
+//   );
+// }
 
 // 'use client'
 
 // import { useState } from 'react'
 // import { Button } from "@/components/ui/button"
 // import { Input } from "@/components/ui/input"
-
 
 // export default function PDFProcessor() {
 //   const [file, setFile] = useState<File | null>(null)
@@ -138,9 +133,9 @@ export default function Chat() {
 
 //           <form onSubmit={handleSubmit} className="space-y-4">
 //             <div className="grid w-full max-w-sm items-center gap-1.5">
-//               <Input 
-//                 type="file" 
-//                 accept=".pdf" 
+//               <Input
+//                 type="file"
+//                 accept=".pdf"
 //                 onChange={handleFileChange}
 //                 className="cursor-pointer"
 //               />
@@ -148,7 +143,7 @@ export default function Chat() {
 //             <Button type="submit" disabled={!file || processing}>
 //               {processing ? 'Processing...' : 'Process PDF'}
 //             </Button>
-          
+
 //           </form>
 
 //           {error && (
@@ -185,18 +180,10 @@ export default function Chat() {
 //               )}
 //             </div>
 //           )}
-      
+
 //     </div>
 //   )
 // }
-
-
-
-
-
-
-
-
 
 // 'use client'
 
@@ -252,11 +239,9 @@ export default function Chat() {
 //             )}
 //           </div>
 //         )}
-//      </> 
+//      </>
 //   )
 // }
-
-
 
 // 'use client';
 
@@ -276,9 +261,7 @@ export default function Chat() {
 //   );
 // }
 
-
-
-// // tool invocation 
+// // tool invocation
 // 'use client';
 
 // import { ToolInvocation } from 'ai';
@@ -353,8 +336,6 @@ export default function Chat() {
 //   );
 // }
 
-
-
 // "use client"
 
 // import { useState } from 'react'
@@ -373,11 +354,35 @@ export default function Chat() {
 //     return codeBlockMatch ? codeBlockMatch[1].trim() : result.trim(); // Extract code or return raw result
 //   }
 
+//   const handleSaveFile = async (fileName:string, code: string) => {
+//       try {
+//           const response = await fetch('/api/saveFile', {
+//               method: 'POST',
+//               headers: {
+//                   'Content-Type': 'application/json',
+//               },
+//               body: JSON.stringify({ fileName, code }),
+//           });
+
+//           const result = await response.json();
+//           if (response.ok) {
+//               alert(result.message);
+//           } else {
+//               alert(`Error: ${result.message}`);
+//           }
+//       } catch (error) {
+//           console.error('Error:', error);
+//           alert('An unexpected error occurred.');
+//       }
+//   };
+
 //   const handleGenerate = async () => {
 //     setIsLoading(true)
 //     try {
 //       const result = await generateTypeScript(prompt)
 //       const filteredCode = extractTypeScriptCode(result) // Process generated code
+//       await handleSaveFile("DynamicComponent.tsx",filteredCode)
+
 //       setGeneratedCode(filteredCode)
 //     } catch (error) {
 //       console.error('Error generating TypeScript code:', error)
@@ -412,6 +417,46 @@ export default function Chat() {
 //           </div>
 //         )}
 //       </div>
+//       {/* <DynamicComponent suggestions={exampleProps.suggestions}/> */}
 //     </div>
 //   )
 // }
+
+"use client";
+
+import { experimental_useObject as useObject } from "ai/react";
+import { z } from "zod";
+
+const SelectedComponentSchema = z.object({
+  componentName: z.string(),
+  schema: z.any(),
+});
+
+export default function Page() {
+  const { object, submit, isLoading, stop } = useObject({
+    api: "/api/use-object",
+    schema: SelectedComponentSchema,
+  });
+  console.log(object);
+
+  return (
+    <div>
+      <button
+        onClick={() => submit("Messages during finals week.")}
+        disabled={isLoading}
+      >
+        Generate notifications
+      </button>
+
+      {isLoading && (
+        <div>
+          <div>Loading...</div>
+          <button type="button" onClick={() => stop()}>
+            Stop
+          </button>
+        </div>
+      )}
+      {object?.componentName}
+    </div>
+  );
+}
